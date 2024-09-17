@@ -1,6 +1,5 @@
 // eslint-disable-next-line no-undef
 const config = require("../config");
-const fetch = require("node-fetch");
 
 const requestBody = {
   products: [
@@ -14,7 +13,7 @@ test("Return status code of 200 and check if products are available in warehouse
   let data;
 
   try {
-    const response = await fetch(`${config.API_URL}//api/v1/warehouses/check`, {
+    const response = await fetch(`${config.API_URL}/api/v1/warehouses/check`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
