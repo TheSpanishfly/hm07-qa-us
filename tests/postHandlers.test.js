@@ -8,24 +8,58 @@ const requestBody = {
   ],
 };
 
-test("Return status code of 200 and check if products are available in warehouses", async () => {
-  let actualStatusCode;
-  let data;
-
+// Test 1: Check the status code
+test("Should return status code 200", async () => {
+  let response;
   try {
-    const response = await fetch(`${config.API_URL}/api/v1/warehouses/check`, {
+    response = await fetch(`${config.API_URL}/api/v1/warehouses/check`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(requestBody),
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+  expect(response.status).toBe(200);
+});
+
+// Test 2: Check the response body for expected data
+test("Should return valid data in response body", async () => {
+  let response;
+  let data;
+
+  try {
+    response = await fetch(`${config.API_URL}/api/v1/warehouses/check`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(requestBody),
     });
 
-    actualStatusCode = response.status;
-    expect(actualStatusCode).toBe(200);
     data = await response.json();
+    console.log("Response data:", data);
   } catch (error) {
     console.error(error);
+  }
+
+  expect(data).toBeDefined(); // Ensure response data is defined
+
+  // Check for values in the response
+  expect(data["Everything You Need"]["Sprite Soft Drink"]).toBe(true);
+
+  // Check for the presence of "Food City" and "Gourmet Popcorn Kernels"
+  if (
+    data["Food City"] &&
+    data["Food City"]["Gourmet Popcorn Kernels"] !== undefined
+  ) {
+    expect(data["Food City"]["Gourmet Popcorn Kernels"]).toBe(false);
+  } else {
+    console.warn(
+      "Gourmet Popcorn Kernels or Food City not found in the response"
+    );
   }
 });
